@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter.font import Font
 from PIL import ImageTk, Image
-from buttons import BuyProductBtn
+from buttons import *
 
 
 class MainWindow(tk.Tk):
@@ -16,22 +16,17 @@ class MainWindow(tk.Tk):
         self.con = con
 
         self.create_background()
-        self.create_btns()
-
 
     def create_background(self):
-        background_img = Image.open('background.png').resize((self.width, self.height))
+        # creates the main menu
+        background_img = Image.open('background.png').resize(
+            (self.width, self.height))
         background_img_tk = ImageTk.PhotoImage(background_img)
         background = tk.Label(self, image=background_img_tk)
         background.image = background_img_tk
-        #  self.background.place(
-        #  anchor="center",
-        #  x=680,
-        #  y=400
-        #  )
         background.place(x=0, y=0, relwidth=1, relheight=1)
 
-        # Title - "VCTR GAMING"
+        # title settings
         title_font = Font(
             family="system",
             size=40
@@ -47,15 +42,52 @@ class MainWindow(tk.Tk):
                     y=70
                     )
 
+        self.create_btns()
 
     def create_btns(self):
-        buy_btn = BuyProductBtn(self.con,
-                master = self,
-                text="Remove Product",
-                width=16,
-                height=3,
-                bg="black",
-                fg="white",
-                borderwidth=4,
+        # BUY BUTTON
+        buy_btn = BuyProductBtn(
+            self.con,
+            x=130,
+            y=160,
+            master=self,
+            text="Buy Product",
+        )
+
+        order_product_btn = OrderProductBtn(
+            self.con,
+            x=360,
+            y=160,
+            master=self,
+            text="Order Product"
+        )
+
+        remove_product_btn = RemoveProductBtn(
+            self.con,
+            x=620,
+            y=160,
+            master=self,
+            text="Remove Product",
+        )
+
+        remove_customer_btn = RemoveCustomerBtn(
+            self.con,
+            x=910,
+            y=160,
+            master=self,
+            text="Remove Customer"
+        )
+
+        view_database_btn = ViewDatabaseBtn(
+                self.con,
+                x=1200,
+                y=160,
+                master=self, 
+                text="View Database"
                 )
 
+        if self.con.table_is_empty('products'):
+            buy_btn.config(state=tk.DISABLED)
+            remove_product_btn.config(state=tk.DISABLED)
+        if self.con.table_is_empty('customers'):
+            remove_customer_btn.config(state=tk.DISABLED)

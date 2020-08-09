@@ -41,22 +41,26 @@ class Connection(mysql.connector.connection.MySQLConnection):
             self.crs.execute(CREATE_CUSTOMERS)
             self.commit()
 
-
-    def get_product_names(self):
-        self.crs.execute("SELECT Gamename FROM products;")
-        returned_products = self.crs.fetchall()
-        products = []
-        for i in returned_products:
-            products.append(i[0])
-        return products
-
+    def get_names(self, table):
+        # returns the product names or customer names according to the table given
+        if table=="products":
+            field = "Gamename"
+        else:
+            field = "Cname"
+        self.crs.execute(f'SELECT {field} FROM {table}')
+        returned_list = self.crs.fetchall()
+        names = []
+        for row in returned_list:
+            names.append(row[0])
+        return names
 
     def get_quantity(self, game_name):
-            self.crs.execute(f'SELECT Qty FROM products WHERE Gamename = "{game_name}";')
-            qty = 0
-            for i in self.crs:
-                qty = i[0]
-            return qty
+        # returns the quantity available of the given product 
+        self.crs.execute(f'SELECT Qty FROM products WHERE Gamename = "{game_name}";')
+        qty = 0
+        for i in self.crs:
+            qty = i[0]
+        return qty
 
     def table_is_empty(self, table):
         """
@@ -64,7 +68,7 @@ class Connection(mysql.connector.connection.MySQLConnection):
         :param table: table --- the table which is checked if empty or not
         :return: True if table is empty else return False
         """
-        self.crs.execute("SELECT COUNT(*) FROM {table} + ;")
+        self.crs.execute(f"SELECT COUNT(*) FROM {table};")
         table_count = None
         for i in self.crs:
             table_count = i[0]
