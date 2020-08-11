@@ -1,8 +1,8 @@
 import mysql.connector
 
-CREATE_PRODUCTS = "CREATE TABLE products (GameId int (4) PRIMARY KEY NOT NULL, Gamename varchar (25) NOT NULL, Platform varchar (15), Price int (5), Genre varchar (30), Qty int(3));" 
+CREATE_PRODUCTS = "CREATE TABLE products (GameId int (4) PRIMARY KEY NOT NULL, Gamename varchar (45) NOT NULL, Platform varchar (15), Price int (5), Genre varchar (30), Qty int(3));" 
 
-CREATE_CUSTOMERS = "CREATE TABLE customers (Gamename varchar (25) NOT NULL, Cname varchar (25) NOT NULL, Qty int (3) NOT NULL);" 
+CREATE_CUSTOMERS = "CREATE TABLE customers (Gamename varchar (45) NOT NULL, Cname varchar (45) NOT NULL, Qty int (3) NOT NULL);" 
 
 class Connection(mysql.connector.connection.MySQLConnection):
     def __init__(self, host, username, password, **kwargs):

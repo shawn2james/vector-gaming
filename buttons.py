@@ -143,6 +143,9 @@ class OrderProductBtn(MainButton):
         existingp_btn = tk.Button( self.window, text="Existing Product", font=self.text_font, command=self.existing_product)
         cancel_btn = tk.Button(self.window, text="Cancel", font=self.text_font, command=self.window.destroy) 
 
+        if self.con.get_names('products')==[]:
+            existingp_btn.config(state=tk.DISABLED)
+
         cancel_btn.grid(row=1, column=0)
         newp_btn.grid(row=1, column=1)
         existingp_btn.grid(row=1, column=2)
@@ -271,7 +274,7 @@ class RemoveProductBtn(MainButton):
 
     def callback(self):
         self.window = tk.Toplevel()
-        self.window.geometry("500x150")
+        self.window.geometry("670x150")
         self.window.title("Remove Customer")
         self.window.resizable(0, 0)
         self.window.grab_set()
@@ -345,7 +348,7 @@ class ViewDatabaseBtn(MainButton):
 
     def callback(self):
         self.window = tk.Toplevel()
-        self.window.geometry("1300x650")
+        self.window.geometry("1360x650")
         self.window.title("View Database")
         self.window.resizable(0, 0)
         self.window.grab_set()
@@ -362,7 +365,7 @@ class ViewDatabaseBtn(MainButton):
         product_search_label = tk.Label( product_frame, text="Search:", font=self.text_font, bg="lightgray")
         product_search_label.grid(row=1, column=0, padx=15)
 
-        product_search_box = tk.Entry(product_frame, width=100, bd=3)
+        product_search_box = tk.Entry(product_frame, width=80, bd=3)
         product_search_box.grid(row=1, column=1, columnspan=5)
 
         customer_frame = tk.Frame( self.window, bg="white", highlightthickness=3, highlightbackground="black")
@@ -406,27 +409,27 @@ class ViewDatabaseBtn(MainButton):
         attributes = ["Game Id", "Game Name", 'Platform', "Price", "Genre", "Quantity"]
 
         for attr in attributes:
-            heading = tk.Label(frame, text=attr, bg="lightgray", font=Font(family="system", size=12))
-            heading.grid(row=2, column=attributes.index(attr), padx=15, pady=20)
+            heading = tk.Label(frame, text=attr, bg="lightgray", font="system 13 bold")
+            heading.grid(row=2, column=attributes.index(attr), padx=2, pady=20)
 
     def draw_customer_fields(self, frame):
         attributes = ["Game Name", "Customer Name", "Quantity"]
 
         for attr in attributes:
-            heading = tk.Label(frame, text=attr, bg="white", font=Font(family="system", size=12))
-            heading.grid(row=2, column=attributes.index( attr), padx=30, pady=20)
+            heading = tk.Label(frame, text=attr, bg="white", font="system 13 bold")
+            heading.grid(row=2, column=attributes.index( attr), padx=2, pady=20)
     
     def draw_products(self, frame, database):
         for game in database:
             for detail in game:
-                game_detail = tk.Label(frame, text=detail, bg="lightgray")
+                game_detail = tk.Label(frame, text=detail, bg="lightgray", font="system 11 normal")
                 game_detail.grid(row=database.index(game) + 3, column=game.index(detail), padx=15, pady=7)
 
     def draw_customers(self, frame, database):
         for customer in database:
             for detail in customer:
-                c_detail = tk.Label(frame, text=detail, bg="white")
-                c_detail.grid(row=database.index(customer)+3, column=customer.index(detail), padx=30, pady=2)
+                c_detail = tk.Label(frame, text=detail, bg="white", font="system 11 normal")
+                c_detail.grid(row=database.index(customer)+3, column=customer.index(detail), padx=30, pady=7)
 
     def product_key_up(self, e):
         search = e.widget.get()

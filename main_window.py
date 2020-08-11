@@ -12,6 +12,7 @@ class MainWindow(tk.Tk):
         self.height = self.winfo_screenheight()
         self.geometry(f"{self.width}x{self.height}")
         self.title("Vector Gaming Database Management")
+        self.resizable(False, False)
 
         self.con = con
 
@@ -19,8 +20,7 @@ class MainWindow(tk.Tk):
 
     def create_background(self):
         # creates the main menu
-        background_img = Image.open('background.png').resize(
-            (self.width, self.height))
+        background_img = Image.open('background.jpg').resize( (self.width, self.height) )
         background_img_tk = ImageTk.PhotoImage(background_img)
         background = tk.Label(self, image=background_img_tk)
         background.image = background_img_tk
@@ -48,43 +48,44 @@ class MainWindow(tk.Tk):
         # BUY BUTTON
         self.buy_btn = BuyProductBtn(
             self.con,
-            x=130,
-            y=160,
+            x=140,
+            y=170,
             master=self,
             text="Buy Product",
         )
 
         self.order_product_btn = OrderProductBtn(
             self.con,
-            x=360,
-            y=160,
+            x=400,
+            y=170,
             master=self,
             text="Order Product"
         )
 
         self.remove_product_btn = RemoveProductBtn(
             self.con,
-            x=620,
-            y=160,
+            x=670,
+            y=170,
             master=self,
             text="Remove Product",
         )
 
         self.remove_customer_btn = RemoveCustomerBtn(
             self.con,
-            x=910,
-            y=160,
+            x=950,
+            y=170,
             master=self,
             text="Remove Customer"
         )
 
         self.view_database_btn = ViewDatabaseBtn(
                 self.con,
-                x=1200,
-                y=160,
+                x=1230,
+                y=170,
                 master=self, 
                 text="View Database"
                 )
+
         self.refresh_btns()
 
     def refresh_btns(self): 
@@ -94,6 +95,6 @@ class MainWindow(tk.Tk):
         if products == []:
             self.buy_btn.config(state=tk.DISABLED)
             self.remove_product_btn.config(state=tk.DISABLED)
-        elif customers == []:
+        if customers == []:
             self.remove_customer_btn.config(state=tk.DISABLED)
 
