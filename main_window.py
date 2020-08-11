@@ -46,7 +46,7 @@ class MainWindow(tk.Tk):
 
     def create_btns(self):
         # BUY BUTTON
-        buy_btn = BuyProductBtn(
+        self.buy_btn = BuyProductBtn(
             self.con,
             x=130,
             y=160,
@@ -54,7 +54,7 @@ class MainWindow(tk.Tk):
             text="Buy Product",
         )
 
-        order_product_btn = OrderProductBtn(
+        self.order_product_btn = OrderProductBtn(
             self.con,
             x=360,
             y=160,
@@ -62,7 +62,7 @@ class MainWindow(tk.Tk):
             text="Order Product"
         )
 
-        remove_product_btn = RemoveProductBtn(
+        self.remove_product_btn = RemoveProductBtn(
             self.con,
             x=620,
             y=160,
@@ -70,7 +70,7 @@ class MainWindow(tk.Tk):
             text="Remove Product",
         )
 
-        remove_customer_btn = RemoveCustomerBtn(
+        self.remove_customer_btn = RemoveCustomerBtn(
             self.con,
             x=910,
             y=160,
@@ -78,16 +78,22 @@ class MainWindow(tk.Tk):
             text="Remove Customer"
         )
 
-        view_database_btn = ViewDatabaseBtn(
+        self.view_database_btn = ViewDatabaseBtn(
                 self.con,
                 x=1200,
                 y=160,
                 master=self, 
                 text="View Database"
                 )
+        self.refresh_btns()
 
-        if self.con.table_is_empty('products'):
-            buy_btn.config(state=tk.DISABLED)
-            remove_product_btn.config(state=tk.DISABLED)
-        if self.con.table_is_empty('customers'):
-            remove_customer_btn.config(state=tk.DISABLED)
+    def refresh_btns(self): 
+        products = self.con.get_names('products')
+        customers = self.con.get_names('customers')
+
+        if products == []:
+            self.buy_btn.config(state=tk.DISABLED)
+            self.remove_product_btn.config(state=tk.DISABLED)
+        elif customers == []:
+            self.remove_customer_btn.config(state=tk.DISABLED)
+

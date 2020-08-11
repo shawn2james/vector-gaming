@@ -54,6 +54,14 @@ class Connection(mysql.connector.connection.MySQLConnection):
             names.append(row[0])
         return names
 
+    def get_ids(self):
+        self.crs.execute("SELECT gameid FROM products;")
+        rows = self.crs.fetchall()
+        ids = []
+        for _id in rows:
+            ids.append(str(_id[0]))
+        return ids
+
     def get_quantity(self, game_name):
         # returns the quantity available of the given product 
         self.crs.execute(f'SELECT Qty FROM products WHERE Gamename = "{game_name}";')

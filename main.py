@@ -4,6 +4,7 @@ import mysql.connector
 from main_window import MainWindow
 from connection import Connection
 
+
 class PasswordWindow(tk.Tk):
     """
     The opening window that asks for the username and password to be used to login to the MySQL server
@@ -17,15 +18,15 @@ class PasswordWindow(tk.Tk):
         self.resizable(0, 0)
         self.title("Enter Password")
 
-        # labels and input boxes 
+        # labels and input boxes
         self.username_label = tk.Label(
-                master=self, text="Enter username:", 
-                font=Font(family="system", size=13))
+            master=self, text="Enter username:",
+            font=Font(family="system", size=13))
         self.username_box = tk.Entry(self, width=20)
 
         self.password_label = tk.Label(
-                master=self, text="Enter MySQL Password:", 
-                font=Font(family="system", size=13))
+            master=self, text="Enter MySQL Password:",
+            font=Font(family="system", size=13))
         self.password_box = tk.Entry(self, show="*", width=20)
 
         # ok and cancel buttons
@@ -39,7 +40,6 @@ class PasswordWindow(tk.Tk):
         self.password_box.grid(row=1, column=1)
         self.ok_btn.grid(row=2, column=2)
         self.cancel_btn.grid(row=2, column=1)
-
 
     def login_result(self):
         """
@@ -63,17 +63,16 @@ class PasswordWindow(tk.Tk):
         else:
             # if the password is correct, close the password window and display main window
             con = mysql.connector.connect(
-                    host="localhost",
-                    user=username,
-                    password=password
-                    ) 
-            self.con = Connection('localhost', username, password) 
+                host="localhost",
+                user=username,
+                password=password
+            )
+            self.con = Connection('localhost', username, password)
             self.con.create_database()
             self.con.create_products()
             self.con.create_customers()
             self.destroy()
             self.init_main_window()
-
 
     def cancel(self):
         """
@@ -81,13 +80,11 @@ class PasswordWindow(tk.Tk):
         """
         self.destroy()
 
-
     def init_main_window(self):
         main_window = MainWindow(self.con)
         main_window.mainloop()
 
 
-
-if __name__=="__main__":
+if __name__ == "__main__":
     password_window = PasswordWindow()
     password_window.mainloop()
