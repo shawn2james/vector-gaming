@@ -38,6 +38,12 @@ class MainButton(tk.Button):
     def ok(self):
         pass
 
+    def warning(self, window, text, row, col, padx, pady):
+        warning = tk.Label(window, text=text, font=self.text_font, fg="red")
+        warning.grid(row=row, column=col, padx=padx, pady=pady)
+        window.after(3000, warning.destroy)
+
+
 ###############################################################################################################################
 
 class BuyProductBtn(MainButton):
@@ -101,24 +107,31 @@ class BuyProductBtn(MainButton):
 
         qty = self.con.get_quantity(game_name)
 
-        # if the quantity wanted by the customer is more than the available quantity, sell every piece of the product
-        if int(buying_qty) >= qty:
-            buying_qty = qty
-            self.con.crs.execute(
-                f'DELETE FROM products WHERE Gamename = "{game_name}";')
-            self.con.commit()
+        if buying_qty and c_name:
+            if buying_qty.isnumeric():
+                # if the quantity wanted by the customer is more than the available quantity, sell every piece of the product
+                if int(buying_qty) >= qty:
+                    buying_qty = qty
+                    self.con.crs.execute(
+                        f'DELETE FROM products WHERE Gamename = "{game_name}";')
+                    self.con.commit()
 
-        # update quantity in MySQL table
-        self.con.crs.execute(
-            f'UPDATE products SET Qty = Qty-{buying_qty} WHERE Gamename = "{game_name}";')
+                # update quantity in MySQL table
+                self.con.crs.execute(
+                    f'UPDATE products SET Qty = Qty-{buying_qty} WHERE Gamename = "{game_name}";')
 
-        # add customer to the customer table
-        self.con.crs.execute(
-            f'INSERT INTO customers VALUES ("{game_name}", "{c_name}", {buying_qty});')
-        self.con.commit()
+                # add customer to the customer table
+                self.con.crs.execute(
+                    f'INSERT INTO customers VALUES ("{game_name}", "{c_name}", {buying_qty});')
+                self.con.commit()
 
-        self.window.destroy()
-        self.master.refresh_btns()
+                self.window.destroy()
+                self.master.refresh_btns()
+            else:
+               self.warning(self.window, "Invalid Quantity!", row=5, col=0, padx=5, pady=20) 
+
+        else:
+            self.warning(self.window, "All Fields are required!", row=5, col=0, padx=5, pady=20)
 
 ################################################################################################################################
 
@@ -188,7 +201,9 @@ class OrderProductBtn(MainButton):
                     f'UPDATE products SET Qty = Qty + {qty} WHERE Gamename = "{self.selected_product.get()}";')
             self.con.commit()
             self.existingp_window.destroy()
-        self.master.refresh_btns()
+            self.master.refresh_btns()
+        else:
+            self.warning(self.existingp_window, "All fields are required!", row=5, col=0, padx=5, pady=35 )
 
     def new_product(self):
         self.window.destroy()
@@ -243,26 +258,30 @@ class OrderProductBtn(MainButton):
     def confirm_new_product(self):
         game_id = self.id_box.get()
         ids = self.con.get_ids()
-        if game_id in ids:
-            warning = tk.Label(self.newp_window, text="Game Id already taken!", font=self.text_font, fg="red")
-            warning.grid(row=6, column=0, pady=20)
+        game_name = self.pname_box.get()
+        platform = self.platform_box.get()
+        price = self.price_box.get()
+        genre = self.genre_box.get()
+        qty = self.qty_box.get()
 
-            self.newp_window.after(2000, warning.destroy)
+        if game_id and game_name and platform and price and genre and qty:
+            if game_id in ids:
+                warning = tk.Label(self.newp_window, text="Game Id already taken!", font=self.text_font, fg="red")
+                warning.grid(row=6, column=0, pady=20)
+
+                self.newp_window.after(2000, warning.destroy)
+            else:
+
+                if game_name and platform and price and genre and qty:
+                    self.con.crs.execute(
+                            f'INSERT INTO products VALUES ({game_id}, "{game_name}", "{platform}", {price}, "{genre}", {qty});')
+                    self.con.commit()
+
+                    self.newp_window.destroy()
+                self.window.destroy()
+            self.master.refresh_btns()
         else:
-            game_name = self.pname_box.get()
-            platform = self.platform_box.get()
-            price = self.price_box.get()
-            genre = self.genre_box.get()
-            qty = self.qty_box.get()
-
-            if game_name and platform and price and genre and qty:
-                self.con.crs.execute(
-                        f'INSERT INTO products VALUES ({game_id}, "{game_name}", "{platform}", {price}, "{genre}", {qty});')
-                self.con.commit()
-
-                self.newp_window.destroy()
-            self.window.destroy()
-        self.master.refresh_btns()
+            self.warning(self.newp_window, "All fields are required!", row=7, col=0, padx=5, pady=20)
 
 
 
@@ -417,7 +436,7 @@ class ViewDatabaseBtn(MainButton):
 
         for attr in attributes:
             heading = tk.Label(frame, text=attr, bg="white", font="system 13 bold")
-            heading.grid(row=2, column=attributes.index( attr), padx=2, pady=20)
+            heading.grid(row=2, column=attributes.index( attr), padx=15, pady=20)
     
     def draw_products(self, frame, database):
         for game in database:
@@ -429,7 +448,7 @@ class ViewDatabaseBtn(MainButton):
         for customer in database:
             for detail in customer:
                 c_detail = tk.Label(frame, text=detail, bg="white", font="system 11 normal")
-                c_detail.grid(row=database.index(customer)+3, column=customer.index(detail), padx=30, pady=7)
+                c_detail.grid(row=database.index(customer)+3, column=customer.index(detail), padx=15, pady=7)
 
     def product_key_up(self, e):
         search = e.widget.get()
